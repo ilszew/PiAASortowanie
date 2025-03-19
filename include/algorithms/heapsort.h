@@ -1,48 +1,72 @@
 #ifndef SORTING_ALGORITHMS_HEAPSORT_H
 #define SORTING_ALGORITHMS_HEAPSORT_H
+
 #include <vector>
 
 template <typename T>
 class Heap
 {
-  public:
+public:
     Heap(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end)
     {
-
+        data.push_back(T()); // element pusty dla indeksowania od 1
+        for (auto it = start; it != end; ++it)
+            data.push_back(*it);
+        heapSize = data.size() - 1;
+        buildHeap();
     }
-    void removeMax();
-    std::size_t size();
-    bool empty();
-    T& operator[](int index);
+
+    void removeMax()
+    {
+        if (heapSize < 1) return;
+        std::swap(data[1], data[heapSize]);
+        heapSize--;
+        heapify(1);
+    }
+
+    std::size_t size()
+    {
+        return heapSize;
+    }
+
+    bool empty()
+    {
+        return heapSize == 0;
+    }
+
+    T& operator[](int index)
+    {
+        return data[index];
+    }
+
+private:
+    std::vector<T> data;
+    std::size_t heapSize;
+
+    void buildHeap()
+    {
+        for (int i = heapSize / 2; i >= 1; --i)
+            heapify(i);
+    }
+
+    void heapify(int i)
+    {
+        int left = 2 * i;
+        int right = 2 * i + 1;
+        int largest = i;
+
+        if (left <= heapSize && data[left] > data[largest])
+            largest = left;
+        if (right <= heapSize && data[right] > data[largest])
+            largest = right;
+
+        if (largest != i)
+        {
+            std::swap(data[i], data[largest]);
+            heapify(largest);
+        }
+    }
 };
-
-template <typename T>
-void Heap<T>::removeMax()
-{
-    // TODO: zaimplementuj - zachowanie podobne jak w funkcji std::pop_heap - czyli aktualny korzeń ląduje w miejscu ostatniego liścia kopca
-}
-
-template <typename T>
-std::size_t Heap<T>::size()
-{
-    // TODO: zaimplementuj
-    return 0;
-}
-
-template <typename T>
-bool Heap<T>::empty()
-{
-    // TODO: zaimplementuj
-    return false;
-}
-
-template <typename T>
-T& Heap<T>::operator[](int index)
-{
-    // TODO: zaimplementuj - wyjątkowo indeksowanie jest od 1
-    static T t;
-    return t;
-}
 
 
 // sortowanie przez kopcowanie
@@ -53,6 +77,14 @@ class HeapSort
 public:
     void sort(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end)
     {
+        Heap<T> heap(start, end);
+        auto it = end;
+        while (!heap.empty())
+        {
+            --it;
+            *it = heap[1];  // największy element
+            heap.removeMax();
+        }
     };
 };
 

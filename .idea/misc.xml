@@ -4,4 +4,11 @@
     <option name="pythonIntegrationState" value="YES" />
   </component>
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
+  <component name="CidrRootsConfiguration">
+    <sourceRoots>
+      <file path="$PROJECT_DIR$/include" />
+      <file path="$PROJECT_DIR$/include/algorithms" />
+      <file path="$PROJECT_DIR$/include/catch2" />
+    </sourceRoots>
+  </component>
 </project>

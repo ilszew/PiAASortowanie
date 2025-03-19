@@ -1,7 +1,11 @@
 #include <iostream>
+#include "mergesort.h"
+#include "quicksort.h"
+#include "introsort.h"
 
-int main(int argc, char* argv[])
-{
-    std::cout<< "Tu wykonujemy testy efektywności algorytmów"<<std::endl;
+
+
+int main() {
+
     return 0;
 }
