@@ -61,7 +61,7 @@ int main() {
                 "reverse_sorted"
             };
 
-            UniqueRandomGenerator generator(arraySize);
+            randomNumberGenerator generator(arraySize);
 
             const std::array<std::function<std::vector<int>()>, 8> testCaseGenerators = {
                 [&]() { return generator.generateRandomArray(arraySize); },

@@ -1,12 +1,12 @@
-#ifndef UNIQUE_RANDOM_GENERATOR_H
-#define UNIQUE_RANDOM_GENERATOR_H
+#ifndef RANDOM_NUMBER_GENERATOR_H
+#define RANDOM_NUMBER_GENERATOR_H
 
 #include <vector>
 #include <random>
 #include <chrono>
 #include <limits>
 
-class UniqueRandomGenerator {
+class randomNumberGenerator {
 private:
     std::random_device rd;
     std::mt19937 gen;
@@ -14,7 +14,7 @@ private:
     long long seed;
 
 public:
-    UniqueRandomGenerator(size_t size) : 
+    randomNumberGenerator(size_t size) :
         gen(rd()), 
         dist(0, std::numeric_limits<long long>::max()),
         seed(std::chrono::steady_clock::now().time_since_epoch().count()) 
@@ -48,4 +48,4 @@ public:
     }
 };
 
-#endif // UNIQUE_RANDOM_GENERATOR_H
+#endif
