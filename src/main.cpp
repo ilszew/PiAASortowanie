@@ -45,7 +45,6 @@ int main() {
     std::filesystem::create_directory("results");
 
     for (const auto& algorithm : sortAlgorithms) {
-
         std::filesystem::create_directory("results/" + algorithm.name);
 
         for (const auto& arraySize : arraySizes) {
@@ -75,14 +74,9 @@ int main() {
                 [&]() { return generator.generateReversedArray(arraySize); }
             };
 
-
             for (std::size_t testCaseIndex = 0; testCaseIndex < testCaseNames.size(); ++testCaseIndex) {
                 const std::string& testCaseName = testCaseNames[testCaseIndex];
-                std::filesystem::path dirPath = "results/" + algorithm.name + "/" +
-                                                std::to_string(arraySize) + "/" +
-                                                testCaseName;
-                std::filesystem::create_directories(dirPath);
-                std::filesystem::path resultFile = dirPath / "times.txt";
+                std::filesystem::path resultFile = "results/" + algorithm.name + "/" + std::to_string(arraySize) + "/" + testCaseName + ".txt";
                 std::ofstream outFile(resultFile, std::ios::out | std::ios::trunc);
 
                 for (int runIndex = 0; runIndex < 100; ++runIndex) {
