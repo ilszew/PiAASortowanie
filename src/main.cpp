@@ -11,6 +11,7 @@
 #include "mergesort.h"
 #include "quicksort.h"
 #include "introsort.h"
+#include "randomNumberGenerator.h"
 
 struct SortAlgorithm {
     std::string name;
@@ -30,35 +31,6 @@ void quickSortWrapper(std::vector<int>& arr) {
 void introSortWrapper(std::vector<int>& arr) {
     IntroSort<int> sorter;
     sorter.sort(arr.begin(), arr.end());
-}
-
-std::vector<int> generateRandomArray(size_t size) {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> dist(0, size);
-
-    std::vector<int> arr(size);
-    for (size_t i = 0; i < size; i++) {
-        arr[i] = dist(gen);
-    }
-    return arr;
-}
-
-std::vector<int> generatePartiallySortedArray(std::size_t size, double sortedFraction) {
-    std::vector<int> data = generateRandomArray(size);
-
-    if (sortedFraction > 0.0) {
-        std::size_t sortedSize = static_cast<std::size_t>(size * sortedFraction);
-        std::partial_sort(data.begin(), data.begin() + sortedSize, data.end());
-    }
-
-    return data;
-}
-
-std::vector<int> generateReversedArray(std::size_t size) {
-    std::vector<int> data = generateRandomArray(size);
-    std::sort(data.begin(), data.end(), std::greater<int>());
-    return data;
 }
 
 int main() {
@@ -90,15 +62,17 @@ int main() {
                 "reverse_sorted"
             };
 
-            const std::array<std::function<std::vector<int>(std::size_t)>, 8> testCaseGenerators = {
-                generateRandomArray,
-                [](std::size_t size) { return generatePartiallySortedArray(size, 0.25); },
-                [](std::size_t size) { return generatePartiallySortedArray(size, 0.50); },
-                [](std::size_t size) { return generatePartiallySortedArray(size, 0.75); },
-                [](std::size_t size) { return generatePartiallySortedArray(size, 0.95); },
-                [](std::size_t size) { return generatePartiallySortedArray(size, 0.99); },
-                [](std::size_t size) { return generatePartiallySortedArray(size, 0.997); },
-                generateReversedArray
+            UniqueRandomGenerator generator(arraySize);
+
+            const std::array<std::function<std::vector<int>()>, 8> testCaseGenerators = {
+                [&]() { return generator.generateRandomArray(arraySize); },
+                [&]() { return generator.generatePartiallySortedArray(arraySize, 0.25); },
+                [&]() { return generator.generatePartiallySortedArray(arraySize, 0.50); },
+                [&]() { return generator.generatePartiallySortedArray(arraySize, 0.75); },
+                [&]() { return generator.generatePartiallySortedArray(arraySize, 0.95); },
+                [&]() { return generator.generatePartiallySortedArray(arraySize, 0.99); },
+                [&]() { return generator.generatePartiallySortedArray(arraySize, 0.997); },
+                [&]() { return generator.generateReversedArray(arraySize); }
             };
 
 
@@ -109,10 +83,10 @@ int main() {
                                                 testCaseName;
 
                 std::filesystem::create_directories(dirPath);
-                std::vector<int> testCase = testCaseGenerators[testCaseIndex](arraySize);
 
                 for (int runIndex = 0; runIndex < 100; ++runIndex) {
-                    std::vector<int> arrayCopy = testCase;
+
+                    std::vector<int> arrayCopy = testCaseGenerators[testCaseIndex]();
 
                     auto start = std::chrono::high_resolution_clock::now();
                     algorithm.sortFunction(arrayCopy);
@@ -134,7 +108,6 @@ int main() {
                 }
             }
         }
-
     }
     return 0;
 }
