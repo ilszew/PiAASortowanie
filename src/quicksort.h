@@ -2,84 +2,56 @@
 #define SORTING_ALGORITHMS_QUICKSORT_H
 
 #include <vector>
-#include <algorithm>
-#include <iterator>
-#include <stack>
 
 template <typename T>
-class QuickSort {
+class QuickSort
+{
 private:
-    void insertionSort(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end) {
-        for (auto i = start + 1; i != end; ++i) {
-            auto key = *i;
-            auto j = i - 1;
+    typename std::vector<T>::iterator choosePivot(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end) {
+        auto mid = start + (end - start - 1) / 2;
+        end--;
 
-            while (j >= start && *j > key) {
-                *(j + 1) = *j;
-                --j;
-            }
-            *(j + 1) = key;
-        }
+        if (*start > *mid) std::swap(*start, *mid);
+        if (*mid > *end) std::swap(*mid, *end);
+        if (*start > *mid) std::swap(*start, *mid);
+
+        // Put the median at the end
+        std::swap(*mid, *end);
+        return end;
     }
 
-    T medianOfThree(T a, T b, T c) {
-        if (a < b) {
-            if (b < c) return b;
-            else if (a < c) return c;
-            else return a;
-        } else {
-            if (a < c) return a;
-            else if (b < c) return c;
-            else return b;
+    void quickSort(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end) {
+        if (end - start > 1) {
+            auto pivot = partition(start, end);
+            quickSort(start, pivot);
+            quickSort(pivot + 1, end);
         }
     }
 
 public:
-    void sort(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end) {
-        if (std::distance(start, end) <= 16) {
-            insertionSort(start, end);
-            return;
+    typename std::vector<T>::iterator partition(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end) {
+        if (end - start <= 1) return start;
+
+        auto pivotIt = choosePivot(start, end);
+        T pivot = *pivotIt;
+
+        std::swap(*pivotIt, *(end - 1));
+
+        auto i = start;
+        for (auto j = start; j < end - 1; ++j) {
+            if (*j <= pivot) {
+                std::swap(*i, *j);
+                ++i;
+            }
         }
 
-        std::stack<std::pair<typename std::vector<T>::iterator, typename std::vector<T>::iterator>> stack;
-        stack.push({start, end});
+        std::swap(*i, *(end - 1));
+        return i;
+    }
 
-        while (!stack.empty()) {
-            auto [begin, last] = stack.top();
-            stack.pop();
-
-            if (std::distance(begin, last) <= 16) {
-                insertionSort(begin, last);
-                continue;
-            }
-
-            auto middle = begin + std::distance(begin, last) / 2;
-            T pivot = medianOfThree(*begin, *middle, *(last - 1));
-
-            auto partitionLambda = [&](auto b, auto e) {
-                auto i = b;
-                auto j = e - 1;
-
-                while (true) {
-                    while (i < e && *i < pivot) ++i;
-                    while (j >= b && *j > pivot) --j;
-
-                    if (i >= j) break;
-                    std::iter_swap(i, j);
-                    ++i;
-                    --j;
-                }
-                return i;
-            };
-
-            auto partitionPoint = partitionLambda(begin, last);
-
-            if (partitionPoint - begin > 1) {
-                stack.push({begin, partitionPoint});
-            }
-            if (last - partitionPoint > 1) {
-                stack.push({partitionPoint, last});
-            }
+    void sort(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end) {
+        if (start < end) {
+            quickSort(start, end);
         }
     }
 };
