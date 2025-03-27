@@ -81,13 +81,12 @@ int main() {
                 std::filesystem::path dirPath = "results/" + algorithm.name + "/" +
                                                 std::to_string(arraySize) + "/" +
                                                 testCaseName;
-
                 std::filesystem::create_directories(dirPath);
+                std::filesystem::path resultFile = dirPath / "times.txt";
+                std::ofstream outFile(resultFile, std::ios::out | std::ios::trunc);
 
                 for (int runIndex = 0; runIndex < 100; ++runIndex) {
-
                     std::vector<int> arrayCopy = testCaseGenerators[testCaseIndex]();
-
                     auto start = std::chrono::high_resolution_clock::now();
                     algorithm.sortFunction(arrayCopy);
                     auto end = std::chrono::high_resolution_clock::now();
@@ -100,12 +99,9 @@ int main() {
                     }
 
                     std::chrono::duration<double> diff = end - start;
-                    std::filesystem::path resultFile = dirPath / (std::to_string(runIndex) + ".txt");
-
-                    std::ofstream outFile(resultFile, std::ios::out | std::ios::trunc);
                     outFile << std::fixed << std::setprecision(9) << diff.count() << std::endl;
-                    outFile.close();
                 }
+                outFile.close();
             }
         }
     }
