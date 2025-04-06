@@ -3,41 +3,34 @@
 
 #include <vector>
 #include <random>
+#include <algorithm>
 #include <chrono>
 #include <limits>
 
 class randomNumberGenerator {
 private:
-    std::random_device rd;
     std::mt19937 gen;
-    std::uniform_int_distribution<long long> dist;
-    long long seed;
+    std::uniform_int_distribution<int> dist;
 
 public:
-    randomNumberGenerator(size_t size) :
-        gen(rd()), 
-        dist(0, std::numeric_limits<long long>::max()),
-        seed(std::chrono::steady_clock::now().time_since_epoch().count()) 
-    {
-        gen.seed(seed);
-    }
+    randomNumberGenerator()
+        : gen(std::chrono::steady_clock::now().time_since_epoch().count()),
+          dist(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()) {}
 
     std::vector<int> generateRandomArray(size_t size) {
         std::vector<int> arr(size);
         for (size_t i = 0; i < size; ++i) {
-            arr[i] = static_cast<int>(dist(gen) ^ (i * seed));
+            arr[i] = dist(gen);
         }
         return arr;
     }
 
     std::vector<int> generatePartiallySortedArray(size_t size, double sortedFraction) {
         std::vector<int> data = generateRandomArray(size);
-
         if (sortedFraction > 0.0) {
-            std::size_t sortedSize = static_cast<std::size_t>(size * sortedFraction);
+            size_t sortedSize = static_cast<size_t>(size * sortedFraction);
             std::partial_sort(data.begin(), data.begin() + sortedSize, data.end());
         }
-
         return data;
     }
 
