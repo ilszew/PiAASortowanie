@@ -34,9 +34,6 @@ void introSortWrapper(std::vector<int>& arr) {
 }
 
 int main() {
-
-    auto totalStart = std::chrono::high_resolution_clock::now();
-
     const std::array<std::size_t, 5> arraySizes = {10000, 50000, 100000, 500000, 1000000};
     const std::array<SortAlgorithm, 3> sortAlgorithms = {{
         {"MergeSort", mergeSortWrapper},
@@ -64,7 +61,7 @@ int main() {
                 "reverse_sorted"
             };
 
-            randomNumberGenerator generator;
+            randomNumberGenerator generator(arraySize);
 
             const std::array<std::function<std::vector<int>()>, 8> testCaseGenerators = {
                 [&]() { return generator.generateRandomArray(arraySize); },
@@ -95,9 +92,5 @@ int main() {
             }
         }
     }
-    auto totalEnd = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> totalDuration = totalEnd - totalStart;
-    std::cout << "Total execution time: " << std::fixed << std::setprecision(3)
-              << totalDuration.count() << " seconds." << std::endl;
     return 0;
 }
