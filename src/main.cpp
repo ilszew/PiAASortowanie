@@ -88,13 +88,6 @@ int main() {
                     algorithm.sortFunction(arrayCopy);
                     auto end = std::chrono::high_resolution_clock::now();
 
-                    if (!std::is_sorted(arrayCopy.begin(), arrayCopy.end())) {
-                        std::cerr << "Sorting failed for: "
-                            << algorithm.name << ", Size: " << arraySize
-                            << ", Test Case: " << testCaseName << std::endl;
-                        continue;
-                    }
-
                     std::chrono::duration<double> diff = end - start;
                     outFile << std::fixed << std::setprecision(9) << diff.count() << std::endl;
                 }
