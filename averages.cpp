@@ -49,7 +49,7 @@ int main() {
                 fs::path file_path = fs::path("results") / algo / size / (option + ".txt");
                 double avg_time = average_from_file(file_path);
                 if (avg_time >= 0.0) {
-                    output << algo << "," << size << "," << option << "," << std::fixed << std::setprecision(6) << avg_time << "\n";
+                    output << algo << ";" << size << ";" << option << ";" << std::fixed << std::setprecision(6) << avg_time << "\n";
                 }
             }
         }
