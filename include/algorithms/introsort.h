@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cmath>
+#include <algorithm>
 #include "quicksort.h"
 #include "insertsort.h"
 #include "heapsort.h"
@@ -13,14 +14,17 @@ class IntroSort
 public:
     void sort(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end)
     {
-        int maxDepth = 2 * std::log(std::distance(start, end));
+        if (start >= end) return;
+        int maxDepth = 2 * static_cast<int>(std::log2(end - start));
         introsort(start, end, maxDepth);
     }
 
 private:
     void introsort(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end, int depth)
     {
-        if (std::distance(start, end) <= 16)
+        auto size = std::distance(start, end);
+
+        if (size <= 16)
         {
             InsertSort<T> insertSort;
             insertSort.sort(start, end);
@@ -34,11 +38,31 @@ private:
             return;
         }
 
-        QuickSort<T> quickSort;
-        typename std::vector<T>::iterator partition_point = quickSort.partition(start, end);
+        auto mid = start + size / 2;
+        auto last = end - 1;
 
-        introsort(start, partition_point, depth - 1);
-        introsort(partition_point, end, depth - 1);
+        if (*mid < *start) std::swap(*start, *mid);
+        if (*last < *start) std::swap(*start, *last);
+        if (*last < *mid) std::swap(*mid, *last);
+
+        T pivot = *mid;
+
+        std::swap(*mid, *(end - 2));
+
+        auto i = start;
+        auto j = end - 2;
+
+        for (;;) {
+            while (*(++i) < pivot);
+            while (pivot < *(--j));
+            if (i >= j) break;
+            std::swap(*i, *j);
+        }
+
+        std::swap(*i, *(end - 2));
+
+        introsort(start, i, depth - 1);
+        introsort(i + 1, end, depth - 1);
     }
 };
 
