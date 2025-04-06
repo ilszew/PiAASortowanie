@@ -11,7 +11,7 @@ namespace fs = std::filesystem;
 double average_from_file(const fs::path& file_path) {
     std::ifstream file(file_path);
     if (!file.is_open()) {
-        std::cerr << "Nie mozna otworzyc pliku: " << file_path << std::endl;
+        std::cerr << "Cannot open file" << file_path << std::endl;
         return -1.0;
     }
 
@@ -41,7 +41,7 @@ int main() {
     };
 
     std::ofstream output("average_times.csv");
-    output << "Algorithm,ArraySize,Option,AverageTime\n";
+    output << "Algorithm;ArraySize;Option;AverageTime\n";
 
     for (const auto& algo : algorithms) {
         for (const auto& size : sizes) {
@@ -56,6 +56,5 @@ int main() {
     }
 
     output.close();
-    std::cout << "Script was finished";
     return 0;
 }
